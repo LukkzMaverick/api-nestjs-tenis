@@ -1,6 +1,6 @@
 import { Evento } from '../interfaces/categoria.interface';
 import { Jogador } from '../../jogadores/interfaces/jogador.interface';
-import { MongoDBDocument } from '../../swaggerModels/MongoDBDocument';
+import { MongoDBDocument } from '../../common/swaggerModels/MongoDBDocument';
 import { ApiProperty } from "@nestjs/swagger"
 
 export class CategoriaResponse extends MongoDBDocument {

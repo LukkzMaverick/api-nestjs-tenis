@@ -18,12 +18,12 @@ export class MongoIdValidationPipe implements PipeTransform{
     }
 }
 
-class MongoId {
+export class MongoId {
 
     constructor(id){
         this.id = id
     }
 
     @IsMongoId()
-    id = ''
+    id: string
 }

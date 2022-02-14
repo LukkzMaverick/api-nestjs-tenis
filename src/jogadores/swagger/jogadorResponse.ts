@@ -1,4 +1,4 @@
-import { MongoDBDocument } from '../../swaggerModels/MongoDBDocument';
+import { MongoDBDocument } from '../../common/swaggerModels/MongoDBDocument';
 import { ApiProperty } from "@nestjs/swagger"
 
 export class JogadorResponse extends MongoDBDocument{

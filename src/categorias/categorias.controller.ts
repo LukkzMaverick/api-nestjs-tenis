@@ -2,15 +2,15 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post
 import { CriarCategoriaDto } from './dto/criar-categoria.dto';
 import { CategoriasService } from './categorias.service';
 import { Categoria } from './interfaces/categoria.interface';
-import { MongoIdValidationPipe } from '../pipes/mongoIdValidation.pipe';
+import { MongoIdValidationPipe } from '../common/pipes/mongoIdValidation.pipe';
 import { CategoriaResponse } from './swagger/categoriaResponse';
 import { messagesCategorias } from './messages/messagesCategorias';
-import { AtualizarCategoriaDto } from './dto/atualizar-categoria.dto';
 import { AdicionarEventoResponse } from './interfaces/responses/adicionarEventoResponse';
-import { MongoID } from '../swaggerModels/MongoID';
+import { MongoID } from '../common/swaggerModels/MongoID';
 import { EventoDto as Evento } from './dto/evento.dto';
 import { EventoPatchDto } from './dto/evento-patch.dto';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { AtualizarDescricaoCategoria } from './dto/atualizar-descricao-categoria.dto';
 
 @Controller('categorias')
 export class CategoriasController {
@@ -40,18 +40,18 @@ export class CategoriasController {
         return await this.categoriaService.consultarCategoriaPeloId(_id)
     }
 
-    @Put(":_id")
-    @ApiOperation({summary: "Atualiza uma categoria pelo id"})
-    @ApiResponse({status: 204, description: "Categoria atualizada sucesso."})
+    @Put(":categoriaId/descricao")
+    @ApiOperation({summary: "Atualiza a descricao de uma categoria pelo id da categoria"})
+    @ApiResponse({status: 204, description: "No content."})
     @ApiResponse({status: 404, description: messagesCategorias.CATEGORIA_404})
     @HttpCode(HttpStatus.NO_CONTENT)
     @UsePipes(ValidationPipe)
-    async atualizarCategoria(@Param("_id", MongoIdValidationPipe) _id: string, @Body() atualizarCategoriaDto: AtualizarCategoriaDto): Promise<void>{
-        //return await this.categoriaService.atualizarCategoria(_id, atualizarCategoriaDto)
+    async atualizarDescricaoCategoria(@Param("categoriaId", MongoIdValidationPipe) categoriaId: string, @Body() atualizarDescricaoCategoria: AtualizarDescricaoCategoria): Promise<void>{
+        return await this.categoriaService.atualizarDescricaoCategoria(categoriaId, atualizarDescricaoCategoria)
     }
 
     
-    @Post('eventos/:categoriaId')
+    @Post(':categoriaId/eventos')
     @ApiOperation({summary: "Adiciona um novo evento a uma categoria e retorna o _idEvento"})
     @ApiResponse({status: 201, description: "Evento adicionado com sucesso.", type: MongoID})
     @ApiResponse({status: 404, description: messagesCategorias.CATEGORIA_404})
@@ -60,7 +60,7 @@ export class CategoriasController {
         return await this.categoriaService.adicionarEvento(categoriaId, evento)
     }
 
-    @Delete('eventos/:categoriaId/:eventoId')
+    @Delete(':categoriaId/eventos/:eventoId')
     @ApiOperation({summary: "Remove um evento de uma categoria e retorna 204"})
     @ApiResponse({status: 204, description: "No Content."})
     @ApiResponse({status: 404, description: messagesCategorias.CATEGORIA_404})
@@ -69,12 +69,19 @@ export class CategoriasController {
         return await this.categoriaService.removerEvento(categoriaId, eventoId)
     }
 
-    @Patch('eventos/:categoriaId/:eventoId')
+    @Patch(':categoriaId/eventos/:eventoId')
     @ApiOperation({summary: "Atualiza um evento de uma categoria e retorna 204"})
     @ApiResponse({status: 204, description: "No Content."})
     @ApiResponse({status: 404, description: messagesCategorias.CATEGORIA_404})
+    @HttpCode(HttpStatus.NO_CONTENT)
     @UsePipes(ValidationPipe)
     async atualizarEvento(@Param("categoriaId", MongoIdValidationPipe) categoriaId: string, @Param("eventoId", MongoIdValidationPipe) eventoId: string, @Body() evento: EventoPatchDto): Promise<void>{
         return await this.categoriaService.atualizarEvento(categoriaId, evento, eventoId)
+    }
+
+    @Post('/:categoriaId/jogadores/:jogadorId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async atribuirCategoriaAJogador(@Param("categoriaId", MongoIdValidationPipe) categoriaId: string, @Param("jogadorId", MongoIdValidationPipe) jogadorId: string): Promise<void>{
+        return await this.categoriaService.atribuirCategoriaAJogador(categoriaId, jogadorId)
     }
 }
