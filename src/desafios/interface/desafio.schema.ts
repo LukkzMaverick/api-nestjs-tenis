@@ -3,7 +3,8 @@ export const DesafioSchema = new Schema({
     dataHoraDesafio: Date,
     status: {
         type: String, 
-        enum: ["PENDENTE", "ACEITO", "RECUSADO"]
+        enum: ["PENDENTE", "ACEITO", "NEGADO", "CANCELADO", "REALIZADO"],
+        default: "PENDENTE",
     },
     dataHoraSolitacao: Date,
     dataHoraResposta: Date,

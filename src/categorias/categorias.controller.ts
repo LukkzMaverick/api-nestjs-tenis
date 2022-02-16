@@ -84,4 +84,10 @@ export class CategoriasController {
     async atribuirCategoriaAJogador(@Param("categoriaId", MongoIdValidationPipe) categoriaId: string, @Param("jogadorId", MongoIdValidationPipe) jogadorId: string): Promise<void>{
         return await this.categoriaService.atribuirCategoriaAJogador(categoriaId, jogadorId)
     }
+
+    @Delete('/:categoriaId/jogadores/:jogadorId')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    async removerJogadorDaCategoria(@Param("categoriaId", MongoIdValidationPipe) categoriaId: string, @Param("jogadorId", MongoIdValidationPipe) jogadorId: string): Promise<void>{
+        return await this.categoriaService.removerJogadorDaCategoria(categoriaId, jogadorId)
+    }
 }

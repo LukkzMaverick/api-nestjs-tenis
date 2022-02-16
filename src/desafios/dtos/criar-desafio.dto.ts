@@ -2,7 +2,6 @@ import { IsDateString, IsMongoId, IsNotEmpty } from "class-validator";
 
 export class CriarDesafioDto{
     @IsDateString()
-    @IsNotEmpty()
     dataHoraDesafio: string
 
     @IsMongoId()

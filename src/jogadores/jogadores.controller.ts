@@ -1,6 +1,6 @@
 import { CriarJogadorDto } from './dtos/criar-jogador.dto';
 import { JogadoresService } from './jogadores.service';
-import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Patch, Post, Put, Res, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, HttpStatus, Param, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { Jogador } from './interfaces/jogador.interface';
 import { MongoIdValidationPipe } from '../common/pipes/mongoIdValidation.pipe';
 import { JogadorResponse } from './swagger/jogadorResponse';

@@ -1,6 +1,6 @@
 import { CriarCategoriaDto } from './dto/criar-categoria.dto';
 import { Categoria, Evento } from './interfaces/categoria.interface';
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { messagesCategorias } from './messages/messagesCategorias';
@@ -43,12 +43,28 @@ export class CategoriasService {
     async atribuirCategoriaAJogador(categoriaId: string, jogadorId: string): Promise<void>{
         const jogador = await this.jogadoresService.consultarJogador(jogadorId)
         if(!jogador) throw new NotFoundException(messagesJogadores.JOGADOR_404)
+        if(jogador.categoria) throw new ForbiddenException(messagesCategorias.JOGADOR_JA_CADASTRADO_NA_CATEGORIA)
         const { matchedCount } = await this.categoriaModel.updateOne({_id: categoriaId}, {$addToSet: {jogadores: jogadorId}})
         if (matchedCount < 1) throw new NotFoundException(messagesCategorias.CATEGORIA_404)
+        await this.jogadoresService.adicionarCategoriaAJogador(jogadorId, categoriaId)
     }
 
+    async removerJogadorDaCategoria(categoriaId: string, jogadorId: string): Promise<void>{
+        const jogador = await this.jogadoresService.consultarJogador(jogadorId)
+        if(!jogador) throw new NotFoundException(messagesJogadores.JOGADOR_404)
+        const { matchedCount } = await this.categoriaModel.updateOne({_id: categoriaId}, {$pull: {jogadores: jogadorId}})
+        if (matchedCount < 1) throw new NotFoundException(messagesCategorias.CATEGORIA_404)
+        await this.jogadoresService.removerJogadorDaCategoria(jogadorId)
+    }
+
+    async consultarJogadoresEmCategoria(arrayIds: Array<string>): Promise<Categoria>{
+        const categoria = await this.categoriaModel.findOne({ jogadores: { $all: arrayIds }})
+        if(!categoria) throw new BadRequestException(messagesCategorias.JOGADORES_NAO_ESTAO_NA_MESMA_CATEGORIA)
+        return categoria
+    }
+    
     async adicionarEvento(categoriaId: string, evento: Evento): Promise<AdicionarEventoResponse> {
-        const eventoId = new Types.ObjectId();
+        const eventoId = new Types.ObjectId()
         const { matchedCount } = await this.categoriaModel.updateOne({ _id: categoriaId }, {
             $push: { eventos: { ...evento, _id: eventoId } }
         })

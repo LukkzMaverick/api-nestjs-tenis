@@ -57,4 +57,12 @@ export class JogadoresService {
         const {deletedCount} = await this.jogadorModel.deleteOne({_id})
         if(deletedCount < 1) throw new NotFoundException(messagesJogadores.JOGADOR_404)
     }
+
+    async adicionarCategoriaAJogador(idJogador: string, idCategoria: string): Promise<void>{
+        await this.jogadorModel.findOneAndUpdate({_id: idJogador}, {$set: {categoria: idCategoria}})
+    }
+
+    async removerJogadorDaCategoria(idJogador: string): Promise<void>{
+        await this.jogadorModel.findOneAndUpdate({_id: idJogador}, {$set: {categoria: null}})
+    }
 }
